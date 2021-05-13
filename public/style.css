@@ -1,14 +1,148 @@
-div.post {
-    border: 1px solid black;
-    width: 50%;
-    margin: 10px auto;
+html {
+    background-color: #FFFF99;
+    display: flex;
+        flex-direction: column;
+        flex-wrap: wrap;
+        justify-content: center;
+    width: 100vw;
 }
-div.details {
-    background-color: darkgrey;
-    color: white;
+body {
+    display: flex;
+        align-items: center;
+        flex-flow: column wrap;
+        justify-content: space-between;
+    position: relative;
+        left: -1vh;
+        top: -1vh;
 }
-div.details div {
-    display: inline;
-    width: 30%;
-    border: 1px solid black;
-}
+    header#main-header {
+        background-color: white;
+        border-bottom: #F0F0BD 6px solid;
+        display: flex;
+            align-items: center;
+            /* justify-content: center; */
+            justify-content: space-around;
+        font-family: 'SF Pro', Georgia, serif;
+        height: 10vh;
+        padding: 2px;
+        width: 100vw;
+    }
+        #page-title {
+            height: auto;
+        }
+        section#main-header-log-section {
+            display: flex;
+                align-items: center;
+                flex-flow: row;
+                justify-content: center;
+        }
+            #login-button {
+                height: auto;
+                padding: 4px;
+            }
+            #logout-button {
+                font-family: 'SF Pro', Georgia, serif;
+                height: auto;
+                padding: 4px;
+            }
+    main#content {
+        background-color: #fafafa;
+        border: #F0F0BD 6px solid;
+        display: flex;
+            flex-flow: column wrap;
+            align-items: center;
+        height: auto;
+            min-height: 50vh;
+        /* position: relative; make relative to middle of screen?
+            top: 10vh; */
+        padding: 5px;
+        margin: 10vh;
+        width: 70vw;
+    }
+        div#body {
+            display: flex;
+                align-items: center;
+                flex-flow: column wrap;
+                justify-content:space-around;
+            width: 100%;
+        }
+            div#button-container {
+                color: black;
+                text-align: center;
+            }
+                button#add-task-main {
+                    font-family: 'SF Pro', Georgia, serif;
+                    font-size: 14px;
+                    font-weight: bold;
+                    padding: 10px;
+                }
+                button#add-list-main {
+                    font-family: 'SF Pro', Georgia, serif;
+                    font-size: 14px;
+                    font-weight: bold;
+                    padding: 10px;
+                }
+            div#task-writer {
+                color: black;
+            }
+                input#input-area {
+                    font-family: 'SF Pro', Georgia, serif;
+                    font-size: 14px;
+                }
+            div#task-area {
+                color: black;
+                text-align: left;
+                width: 70%;
+            }
+                .solo-task {
+                    display: flex;
+                        align-items: center;
+                        justify-content: space-between;
+                    background-color: #F8F8AB;
+                    border-left: black 1px solid;
+                    border-right: black 1px solid;
+                    border-top: black 1px dotted;
+                    margin: 0.5vh;
+                }
+                    .solo-tasks-content-container {
+                        position: relative;
+                            left: 0.5vw;
+                        font-family: 'SF Pro', Georgia, serif;
+                        font-size: 14px;
+                        width: auto;
+                            max-width: 40vw;
+                    }
+                    .solo-tasks-delete-button {
+                        position: relative;
+                            right: 0.5vw;
+                    }
+                .list {
+                    border: 1px solid black;
+                    font-weight: bold;
+                    padding: 4px;
+                    margin: 0.5vh;
+                }
+                    .list-task {
+                        background-color: #F8F8AB;
+                        border-left: black 1px solid;
+                        border-right: black 1px solid;
+                        border-top: black 1px dotted;
+                        font-weight: normal;
+                        padding: 2px;
+                    }
+                .task-area-login-message {
+                    color: black;
+                    font-family: 'SF Pro', Georgia, serif;
+                }
+    footer#main-footer {
+        border-top: gray 1px solid;
+        color: black;
+        display: flex;
+            justify-content: center;
+        height: 10vh;
+            max-height: 10vh;
+        padding: 2px;
+        /* position: relative;
+            top: 100vh;  make relative to where body ends? */
+        width: 100vw;
+    }

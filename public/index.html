@@ -1,32 +1,38 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="style.css">
-    <title>Document</title>
-</head>
-<body>
-    <h1>Wildcat Contact</h1>
-    <form id="login">
-        <label for="username">Username: </label>
-        <input type="text" name="username" id="username" />
-        <br />
-        <label for="password">Password: </label>
-        <input type="password" name="password" id="password" />
-        <input type="submit" value="Login / Create Account" />
-    </form>
-    <section id="users">
-        
-    </section>
-    <form id="createPost">
-        <textarea id="newPost"></textarea>
-        <input type="submit" value="Post" />
-    </form>
-    <section id="posts">
+    <head>
+        <meta charset="UTF-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="stylesheet" href="style.css">
+        <title>To-Do List</title>
+    </head>
+    <body>
+        <header id="main-header">
+            <a href="index.html" style="text-decoration: none; color: black;"><h1 id="page-title">To-Do List</h1></a>
+            <section id="main-header-log-section">
+                <a href="login.html" style="text-decoration: none; color: black;"><h3 id="login-button">Login</h3></a>
+                <button id="logout-button">Logout</h3>
+            </section>
+        </header>
 
-    </section>
+        <main id="content">
+            <div id="body">
+                <div id="button-container">
+                    <button type="button" id="add-task-main">Add Task</button>
+                    <!-- <button type="button" id="add-list-main">Add List</button> -->
+                </div>
+                <div id="task-writer">
+                    <input type="text" id="input-area">
+                </div>
+                <div id="task-area"></div>
+            </div>
+        </main>
 
-    <script src="script.js"></script>
-</body>
+        <footer id="main-footer">
+            <p> © 2021 Ryan Tussing </p>
+        </footer>
+
+        <script src="script.js"></script>
+    </body>
 </html>

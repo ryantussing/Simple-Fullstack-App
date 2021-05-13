@@ -1,124 +1,110 @@
 const express = require('express')
 const sqlite3 = require('sqlite3')
+const path = require('path')
 const app = new express()
-const db = new sqlite3.Database('./db/social.db')
-const users = loadData().users
-//3. New posts save on server
-
-//serve client side files
-app.use(express.static('public'))
-app.use(express.json())
-
-app.get("/posts", (req,res) => {
-    const sql = "SELECT * FROM posts;"
-    db.all(sql,[],(err, rows) => {
-        res.send(rows)
-    })
-})
-//4.1 handle a GET request on /users
-app.get("/users", (req,res) => {
-    const sql = "SELECT * FROM users"
-    db.all(sql,[],(err, rows) => {
-        res.send(rows)
-    })
-})
-
-app.post("/friends", (req, res) => {
-    const friendship = req.body
-    const sql = "INSERT INTO users_users (userid1, userid2) VALUES (?,?)"
-    //const sql2 = "SELECT firstName, lastName FROM users WHERE id = ?"
-    db.run(sql,[friendship.user_id, friendship.friend_id],(err) => {
-        if (err) console.error(err)
-        res.send({
-            message: "You are now friends!",
-            friendshipID: this.lastID
-        })
-    })
-})
-
-//3.2 define request handler for POST on /posts
-app.post("/posts", (req,res)=> {
-    const post = req.body;
-    //3.2.1. verify the post is at least 5 characters long
-    if (post.text.length >= 5) {
-        //3.2.2. add to posts array if valid
-        const sql = "INSERT INTO posts (content, user_id) VALUES (?,?);"
-        db.run(sql,[post.text,post.user_id])
-        //3.2.3. send response 'New post successfully saved.'
-        res.send({
-            message: "Post successfully saved"
-        })
+const db = new sqlite3.Database('./db/todo.db', (err) => {
+    if (err) {
+        console.error(err.message)
     }
-    //3.2.4. if invalid send error response
     else {
-        res.status(401)
-        res.send({
-            message: "Post is not long enough."
-        })
+        console.log('Connected to db')
+        console.log(__dirname)
     }
 })
+let user_id
+let new_user
+
+app.use(express.static(path.join(__dirname, 'public')))
+app.use(express.json())
 
 app.post("/login", (req, res) => {
     const user = req.body
-    //5. retrieve all users from database
-    //6. only retrieve users with matching username and password
-    const sql2 = "SELECT id, first_name, last_name FROM users WHERE username = ? AND password = ?"
+    const sql2 = "SELECT id FROM users WHERE username = ? AND password = ?"
     db.all(sql2,[user.username, user.password],(err, rows) => {
         if (rows && rows.length > 0) {
             res.send({
+                loggedIn: true,
                 message: "Successful login!",
-                user: rows[0]
+                newUser: false,
+                userID: rows[0],
+                username: user.username
             })
-        }
-    
-
-    //let userMatch = users.find( (u) => u.username == user.username && u.password == user.password )
-    //Does userMatch exist?
-    
-    else {
-        if (user.username.length >= 4 && user.password.length >= 4) {
-            //save new account on server
-            //4. New user is stored in database
-            const sql = "INSERT INTO users (username, password, first_name, last_name) VALUES (?,?,?,?)"
-            db.run(sql,[user.username, user.password, user.firstName, user.lastName],(err) => {
-                if (err) console.error(err)
-                res.send({
-                    message: "Your account was successfully created.",
-                    userId: this.lastID
-                })
-            })
-        }
-        else {
-            res.status(401)
-            res.send({
-                message: "Username or password is invalid."
-            })
-        }
-    }
+            new_user = false
+            user_id = rows[0]
+            console.log(user_id.id)
+        }   else {
+                if (user.username.length >= 4 && user.password.length >= 4) {
+                    const sql = "INSERT INTO users (username, password) VALUES (?,?)"
+                    db.run(sql,[user.username, user.password], function (err) {
+                        if (err) console.error(err)
+                        console.log(this)
+                        res.send({
+                            loggedIn: true,
+                            message: "Your account was successfully created.",
+                            newUser: true,
+                            userID: this.lastID,
+                            username: user.username
+                        })
+                        new_user = true
+                        user_id = this.lastID
+                        console.log(user_id)
+                    })
+                }   else {
+                        res.status(401)
+                        res.send({
+                            loggedIn: false,
+                            message: "Username or password is invalid. Please enter a valid username and password. (Each must be greater than 4 characters)",
+                        })
+                    }
+            }
     })
 })
 
-app.listen(3000, () => console.log("Server started"))
-
-function loadData() {
-    return {
-        users:
-        [
-            {
-                id: 1,
-                username: "jword",
-                password: "hello2021"
-            },
-            {
-                id: 2,
-                username: "tommyinnit",
-                password: "blockgame"
-            },
-            {
-                id: 3,
-                username: "joel15",
-                password: "kirby"
-            }
-        ]
+app.post("/addTasks", (req,res) => {
+    const payload = req.body
+    const sql = "INSERT INTO solo_tasks (user_id, content) VALUES (?,?)"
+    if (payload.content.length > 0) {
+        db.all(sql,[payload.user_id, payload.content],(err, rows) => {
+            res.send({
+                message: "New task successfully added to solo_tasks."
+            })
+        })
+    } else {
+        // alert("Please add text to your new task.")
+        res.send({
+            message: "Please add text to your new task.",
+            tooShort: true
+        })
     }
-}
+})
+
+app.post("/removeTasks", (req,res) => {
+    const payload = req.body
+    const sql = "DELETE FROM solo_tasks WHERE solo_tasks.id = ?"
+        db.all(sql,[payload.solo_task_id],(err, rows) => {
+            res.send({
+                message: "Task successfully deleted from solo_tasks."
+            })
+        })
+})
+
+app.get("/loadTasks", (req,res) => {
+    const sql = "SELECT content, id FROM solo_tasks WHERE solo_tasks.user_id = ?;"
+    if (new_user) {
+        db.all(sql,[user_id],(err, rows) => {
+            if (rows && rows.length > 0) {
+                console.log("Rows exist on the /loadTasks get request. new_user option was run.")
+                res.send(rows)
+            } else {console.log("Rows were not found on the /loadTasks get request. new_user option was run.")}
+        })
+    } else if (!new_user) {
+        db.all(sql,[user_id.id],(err, rows) => {
+            if (rows && rows.length > 0) {
+                console.log("Rows exist on the /loadTasks get request. !new_user option was run.")
+                res.send(rows)
+            } else {console.log("Rows were not found on the /loadTasks get request. !new_user option was run.")}
+        })
+    } else {console.error()}
+})
+
+app.listen(3000, () => console.log("Server started"))

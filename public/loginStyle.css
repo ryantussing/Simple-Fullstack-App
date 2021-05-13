@@ -1,0 +1,96 @@
+html {
+    background-color: #FFFF99;
+    display: flex;
+        flex-direction: column;
+        flex-wrap: wrap;
+        justify-content: center;
+    width: 100vw;
+}
+body {
+    display: flex;
+        align-items: center;
+        flex-flow: column wrap;
+        justify-content: space-between;
+    position: relative;
+        left: -1vh;
+        top: -1vh;
+}
+    header#main-header {
+        background-color: white;
+        border-bottom: #F0F0BD 6px solid;
+        display: flex;
+            align-items: center;
+            /* justify-content: center; */
+            justify-content: space-around;
+        font-family: 'SF Pro', Georgia, serif;
+        height: 10vh;
+        padding: 2px;
+        width: 100vw;
+    }
+        #page-title {
+            height: auto;
+        }
+        section#main-header-log-section {
+            display: flex;
+                align-items: center;
+                flex-flow: row;
+                justify-content: center;
+        }
+            #login-button {
+                height: auto;
+                padding: 4px;
+            }
+            #logout-button {
+                font-family: 'SF Pro', Georgia, serif;
+                height: auto;
+                padding: 4px;
+            }
+    main#content {
+        background-color: #fafafa;
+        border: #F0F0BD 6px solid;
+        display: flex;
+            flex-flow: column wrap;
+            align-items: center;
+            justify-content: center;
+        height: auto;
+            min-height: 50vh;
+        /* position: relative; make relative to middle of screen?
+            top: 10vh; */
+        padding: 5px;
+        margin: 10vh;
+        width: 70vw;
+    }
+        form#login {
+            border:  #F0F0BD 2px solid;
+            display: flex;
+                align-items: center;
+                flex-flow: column;
+                justify-content: center;
+            font-family: 'SF Pro', Georgia, serif;
+            padding: 4vh;
+            font-size: 24px;
+        }
+            section#form-section {
+                display: flex;
+                    align-items: center;
+                    flex-flow: column;
+                    justify-content: center;
+            }
+            section.login-message {
+                color: red;
+                font-family: 'SF Pro', Georgia, serif;
+                font-size: 12px;
+                text-align: center;
+            }
+    footer#main-footer {
+        border-top: gray 1px solid;
+        color: black;
+        display: flex;
+            justify-content: center;
+        height: 10vh;
+            max-height: 10vh;
+        padding: 2px;
+        /* position: relative;
+            top: 100vh;  make relative to where body ends? */
+        width: 100vw;
+    }

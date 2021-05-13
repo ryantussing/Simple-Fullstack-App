@@ -1,181 +1,172 @@
-//2. User can create new post, send to server
-const $postsContainer = document.getElementById("posts")
-//1.1 js reference to the section element with id users
-const $usersContainer = document.getElementById("users")
-document.getElementById("login")
-    .onsubmit = login
-//2.1 Set createPost function as onsubmit handler for the create post form 
-document.getElementById("createPost")
-    .onsubmit = createPost
+const $header = document.querySelector('header#main-header')
+const $content = document.getElementById('main#content')
+const $footer = document.getElementById('footer#main-footer')
+const $addTaskMain = document.getElementById('add-task-main')
+const $addListMain = document.getElementById('add-list-main')
+const $addTaskList = document.getElementById('add-task-list')
+const $taskArea = document.getElementById('task-area')
+const $taskWriter = document.getElementById('task-writer')
+const $inputArea = document.getElementById('input-area')
+const $logoutButton = document.getElementById('logout-button')
+const $soloDelete = document.getElementById('solo-tasks-delete-button')
 
-spawnPosts()
-//1.4 call function to spawn user elements
-spawnUsers()
-//2.2 Define function createPost to send post to server
-let user_id
-
-function createPost(e) {
-    e.preventDefault()
-    const payload = {
-        body: JSON.stringify({
-            text: document.getElementById("newPost").value
-        }),
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json"
-        }
-    }
-    fetch("/posts", payload)
-        .then(res => res.json())
-        .then(res => console.log(res.body))
-        .catch(error => console.error(error))
+$logoutButton.onclick = () => {
+    localStorage.setItem('loggedIn', false)
+    localStorage.setItem('usernameLocal', null)
+    localStorage.setItem('currentUserID', null)
+    loadTasks(localStorage.getItem('loggedIn'))
 }
 
-function login(e) {
-    e.preventDefault()
+$addTaskMain.onclick = () => {addTasks(localStorage.getItem('loggedIn'))}
+// $addListMain.onclick = () => {addLists(localStorage.getItem('loggedIn'))}
+
+loadTasks(localStorage.getItem('loggedIn'))
+
+function loadTasks(loggedIn) {
+    // console.log(typeof loggedIn+" loggedIn was passed into loadTasks() as: "+loggedIn)
+    if (loggedIn == "true") {
+        // e.preventDefault()
+        fetch("/loadTasks")
+            .then(res => res.json())
+            // ERROR happens because new_user on server.js does not have  a true or false value once the server is started
+            .then(res => {
+                $taskArea.innerHTML = ""
+                const soloTasksHTML = res.map( solo_tasks => `
+                    <div id="${solo_tasks.id}" class="solo-task">
+                        <p class="solo-tasks-content-container">${solo_tasks.content}</p>
+                        <button class="solo-tasks-delete-button" id="solo-tasks-delete-button-${solo_tasks.id}" 
+                        onclick="removeTasks(${solo_tasks.id})" value="${solo_tasks.id}">X</button>
+                    </div>
+                `).join("")
+                $taskArea.innerHTML = $taskArea.innerHTML + soloTasksHTML
+                // console.log("loadTasks() was called and loggedIn was true.")
+            })
+    } else if (loggedIn == "false") {
+        $taskArea.innerHTML = ""
+        const taskAreaLoginMessageHTML = `<div id="task-area-login-message-html" class="task-area-login-message">
+            Logged out! No tasks available! Login to start adding tasks!</div>`
+        $taskArea.innerHTML = $taskArea.innerHTML + taskAreaLoginMessageHTML
+        // console.log("loadTasks() was called and loggedIn was false.")
+        }   else {
+                console.error()
+            }
+}
+
+function addTasks(loggedIn) {
+    if (loggedIn == "false") {
+        alert("not logged in")
+    } else if (loggedIn == "true") {
+        const payload = {
+            body: JSON.stringify({
+                content: document.getElementById("input-area").value,
+                user_id: localStorage.getItem('currentUserID')
+            }),
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            }
+        }
+        fetch("/addTasks", payload)
+            .then(res => res.json())
+            .then(res => {
+                loadTasks(localStorage.getItem('loggedIn'))
+                if (res.tooShort) {
+                    alert(res.message)
+                }
+                $inputArea.value = ''
+            })
+            .catch(error => console.error(error))
+    } else {console.error()}
+}
+
+function removeTasks(idOfTaskToBeDeleted) {
+    // console.log("removeTasks() was called.")
     const payload = {
         body: JSON.stringify({
-            username: document.getElementById("username").value,
-            password: document.getElementById("password").value
+            solo_task_id: idOfTaskToBeDeleted
         }),
         method: "POST",
         headers: {
             "Content-Type": "application/json"
         }
     }
-    fetch("/login", payload)
+    fetch("/removeTasks", payload)
         .then(res => res.json())
         .then(res => {
-            user_id = res.userId
+            loadTasks(localStorage.getItem('loggedIn'))
+            // console.log(res.message)
         })
         .catch(error => console.error(error))
 }
 
-function spawnPosts() {
-   //GET posts from server
-   fetch("/posts")
-    .then(res => res.json())
-    .then(posts => {
-        const postsHTML = posts.map( post => `
-        <div class="post">
-            <p>${post.content}</p>
-            <div class="details">
-                <div>${post.userid}</div>
-            </div>
-        </div>
-        ` ).join("")
-        $postsContainer.innerHTML = postsHTML
-    })
-    .catch(err => console.error(err))
-   
-}
+// function addLists(loggedIn) {
+//     if (loggedIn == "false") {
+//         alert("not logged in")
+//     } else if (loggedIn == "true") {
+//         const payload = {
+//             body: JSON.stringify({
+//                 title: document.getElementById("input-area").value,
+//                 user_id: localStorage.getItem('currentUserID')
+//             }),
+//             method: "POST",
+//             headers: {
+//                 "Content-Type": "application/json"
+//             }
+//         }
+//         fetch("/addLists", payload)
+//             .then(res => res.json())
+//             .then(res => {
+//                 loadLists(localStorage.getItem('loggedIn'))
+//                 if (res.tooShort) {
+//                     alert(res.message)
+//                 }
+//                 $inputArea.value = ''
+//             })
+//             .catch(error => console.error(error))
+//     } else {console.error()}
+// }
 
-//1.2 define a function to spawn user elements
-//4.2 update spawnUsers to pull from server
-function spawnUsers() {
-    //GET posts from server
-    fetch("/users")
-     .then(res => res.json())
-     .then(users => {
-         const usersHTML = users.map( user => `
-         <div class="user" data-userid=${user.id}>
-             <p>${user.username}</p>
-             <div class="details">
-                 <div>${user.firstName}</div>
-             </div>
-             <button onclick="e => {addFriend(e);}">Add Friend</button>
-         </div>
-         ` ).join("")
-         $usersContainer.innerHTML = usersHTML
-     })
-     .catch(err => console.error(err))
-    
- }
-//1.3 each user element should be a div that shows user info
-//... and has a button that says Add Friend (doesn't work)
-
-//5. add Friend button works
-function addFriend(e) {
-    const $userDiv = e.target.parentElement
-    const friend_id = $userDiv.userid
-
-    const payload = {
-        body: JSON.stringify({
-            user_id: user_id,
-            friend_id: friend_id
-        }),
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json"
-        }
-    }
-    fetch("/friends", payload)
-        .then(res => res.json())
-        .then(res => console.log(res.body))
-        .catch(error => console.error(error))
-}
-
-function loadData() {
+function contentArray() {
+    // IDs WILL CHANGE TO ACCEPT VALUES FROM THE DATABASE
     return {
-        posts: [
+        solo_tasks : 
+        [
             {
-                text: "I got a new dog last night! It's so cute!",
-                user: "kimmy23",
-                datetime: new Date(),
-                numLikes: 3,
-                comments: []
+                "id" : 1 ,
+                "content" : "-- Do homework"
             },
             {
-                text: "I got a new dog last night! It's so cute!",
-                user: "kimmy23",
-                datetime: new Date(),
-                numLikes: 3,
-                comments: []
-            },
-            {
-                text: "I got a new dog last night! It's so cute!",
-                user: "kimmy23",
-                datetime: new Date(),
-                numLikes: 3,
-                comments: []
-            },
-            {
-                text: "I got a new dog last night! It's so cute!",
-                user: "kimmy23",
-                datetime: new Date(),
-                numLikes: 3,
-                comments: []
+                "id" : 2 ,
+                "content" : "-- Don't do homework"
             }
         ],
-        users: [
+        lists : 
+        [
             {
-                username: "kimmy23",
-                firstName: "Kimberly",
-                lastName: "Bash",
-                gender: "F",
-                age: 45
-            },
-            {
-                username: "wordup",
-                firstName: "John",
-                lastName: "Word",
-                gender: "M",
-                age: 31
-            },
-            {
-                username: "dogguy23",
-                firstName: "Rob",
-                lastName: "Obeneur",
-                gender: "M",
-                age: 62
-            },
-            {
-                username: "silentninja84",
-                firstName: "Lesa",
-                lastName: "Kirkland",
-                gender: "F",
-                age: 17
+                "id" : 1,
+                "title" : "Activities",
+                list_tasks : [
+                    {
+                        "id" : 1,
+                        "content" : "-- Run"
+                    },
+                    {
+                        "id" : 2,
+                        "content" : "-- Walk"
+                    },
+                    {
+                        "id" : 3,
+                        "content" : "-- Swim"
+                    }
+                ]
+                
             }
         ]
     }
 }
+/* 
+- POSSIBLE IDEAS: 
+    - create a database table linking all solo_tasks/lists titled "order", and as each element is added it is given an
+    increasing int value that can then be used to sort the order in which elements were added
+    - add animations and shadows to elements
+*/

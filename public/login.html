@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="stylesheet" href="loginStyle.css">
+        <title>To-Do List Login</title>
+    </head>
+    <body>
+        <header id="main-header">
+            <a href="index.html" style="text-decoration: none; color: black;"><h1 id="page-title">To-Do List</h1></a>
+            <section id="main-header-log-section">
+                <a href="login.html" style="text-decoration: none; color: black;"><h3 id="login-button">Login</h3></a>
+                <button id="logout-button" >Logout</h3>
+            </section>
+        </header>
+
+        <main id="content">
+            <form id="login">
+                <section id="form-section">
+                    <div id="form-labels">
+                        <label for="username">Username: </label>
+                        <input type="text" name="username" id="username" />
+                        <br />
+                        <label for="password">Password: </label>
+                        <input type="password" name="password" id="password" />
+                    </div>
+                    <div id="formInput">
+                        <input type="submit" value="Login / Create Account" />
+                    </div>
+                </section>
+            </form>
+        </main>
+
+        <footer id="main-footer">
+            <p> © 2021 Ryan Tussing </p>
+        </footer>
+
+        <script src="login.js"></script>
+    </body>
+</html>
